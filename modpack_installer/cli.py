@@ -476,7 +476,7 @@ def main():
         print("\n\nInstallation cancelled by user.")
         sys.exit(130)
     except Exception as e:
-        print(f"\n\nError during installation: {e}")
+        print("\n\nError during installation: %s" % e)
         sys.exit(1)
 
 if __name__ == "__main__":

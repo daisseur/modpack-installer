@@ -15,7 +15,7 @@ def get_forge_url(mcver, mlver):
             % mcver
 
     # Use tempfile for secure temporary file creation
-    fd, outpath = tempfile.mkstemp(prefix=f'forge-{mcver}-index-', suffix='.html')
+    fd, outpath = tempfile.mkstemp(prefix='forge-%s-index-' % mcver, suffix='.html')
     os.close(fd)  # Close file descriptor, we'll use the path
     
     try:
@@ -45,7 +45,7 @@ def main(manifest, mcver, mlver, packname, mc_dir, manual):
     url_providers = [guess_forge_url, get_forge_url]
 
     # Use tempfile for secure temporary file creation
-    fd, outpath = tempfile.mkstemp(prefix=f'forge-{mcver}-{mlver}-installer-', suffix='.jar')
+    fd, outpath = tempfile.mkstemp(prefix='forge-%s-%s-installer-' % (mcver, mlver), suffix='.jar')
     os.close(fd)  # Close file descriptor, we'll use the path
 
     try:

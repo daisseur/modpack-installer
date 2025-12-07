@@ -43,7 +43,7 @@ def main(manifest, mcver, mlver, packname, mc_dir, manual):
         % (installer_ver, installer_ver)
     
     # Use tempfile for secure temporary file creation
-    fd, outpath = tempfile.mkstemp(prefix=f'fabric-{installer_ver}-installer-', suffix='.jar')
+    fd, outpath = tempfile.mkstemp(prefix='fabric-%s-installer-' % installer_ver, suffix='.jar')
     os.close(fd)  # Close file descriptor, we'll use the path
     
     try:
