@@ -1,32 +1,4 @@
-## Modpack Installer  
-###### V2.3.5
-
-This command-line tool allows easy installation of CurseForge modpacks on Linux
-systems. It installs each modpack in a semi-isolated environment, which prevents
-them from modifying important settings and data in your main Minecraft installation.
-
-This is a small project and may be unstable. If you find a bug, please
-help me out by posting an [issue](https://github.com/cdbbnnyCode/modpack-installer/issues)!
-
-**V2.3 update info**: Now uses the *official* CurseForge API. This has some major impacts:
-* API requests are now authenticated with a key, and are now rate-limited on the client side
-  to avoid excessive requests with this project's key.
-  * **NOTE TO DEVELOPERS** - Forks and modifications of this project *must* use a new API key.
-    See [here](https://support.curseforge.com/en/support/solutions/articles/9000208346-about-the-curseforge-api-and-how-to-apply-for-a-key) for details.
-* Some mods now disallow 3rd-party distribution. These mods will be listed in the installer's output
-  and must be downloaded manually from the CurseForge website. (Download URLs are provided directly).
-  While this is tedious, it allows mod creators to always receive ad revenue from the download page.
-
-**V2.2 update info**: After updating to version 2.2, please run the `migrate.py`
-script to create launcher profiles for your modpacks in your main `.minecraft`
-directory. See the changelog below for details.
-
-Minecraft Forge auto-installation should now work with all current versions of the installer.
-If it does not work properly, please post an issue reporting the error as well as the version
-of the installer.
-
-**V2.1 update info**: After updating to version 2.1, please run the `clean.py` script
-to upgrade all of your existing modpacks.
+## Modpack Installer (as a cli tool)
 
 ### Features
 * Simple command-line interface
