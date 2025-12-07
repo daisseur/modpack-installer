@@ -4,6 +4,8 @@ import re
 import subprocess
 import sys
 import time
+import shutil
+import tempfile
 from .util import download
 
 # https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2847/forge-1.12.2-14.23.5.2847-universal.jar
@@ -64,6 +66,7 @@ def main(manifest, mcver, mlver, packname, mc_dir, manual):
     else:
         # Find the ForgeHack.java file location
         import importlib.resources
+        import tempfile
         try:
             # Python 3.9+
             if hasattr(importlib.resources, 'files'):
@@ -77,24 +80,30 @@ def main(manifest, mcver, mlver, packname, mc_dir, manual):
             package_dir = os.path.dirname(os.path.abspath(__file__))
         
         forge_hack_src = os.path.join(package_dir, 'ForgeHack.java')
-        forge_hack_cls = os.path.join(package_dir, 'ForgeHack.class')
         
-        compile_hack = False
-        if not os.path.exists(forge_hack_cls):
-            compile_hack = True
-        else:
-            src_modtime = os.stat(forge_hack_src).st_mtime
-            cls_modtime = os.stat(forge_hack_cls).st_mtime
-            if src_modtime > cls_modtime:
-                print("hack source file updated, recompiling")
-                compile_hack = True
-
-        if compile_hack:
-            subprocess.run(['javac', forge_hack_src], cwd=package_dir)
-        exit_code = subprocess.run(['java', '-cp', package_dir, 'ForgeHack', outpath, mc_dir]).returncode
-        if exit_code != 0:
-            print("Error running the auto-installer, try using --manual.")
-            sys.exit(3)
+        # Use a secure temporary directory for compilation
+        # This prevents potential security issues if the package directory is writable by others
+        compile_dir = tempfile.mkdtemp(prefix='forge_hack_')
+        try:
+            # Copy source to temp directory
+            temp_src = os.path.join(compile_dir, 'ForgeHack.java')
+            shutil.copy2(forge_hack_src, temp_src)
+            
+            # Compile in temp directory
+            result = subprocess.run(['javac', temp_src], cwd=compile_dir, capture_output=True)
+            if result.returncode != 0:
+                print("Error compiling ForgeHack:")
+                print(result.stderr.decode())
+                sys.exit(3)
+            
+            # Run from temp directory
+            exit_code = subprocess.run(['java', '-cp', compile_dir, 'ForgeHack', outpath, mc_dir]).returncode
+            if exit_code != 0:
+                print("Error running the auto-installer, try using --manual.")
+                sys.exit(3)
+        finally:
+            # Clean up temp directory
+            shutil.rmtree(compile_dir, ignore_errors=True)
 
     ver_id = get_version_id(mcver, mlver)
     if not os.path.exists(mc_dir + '/versions/' + ver_id):

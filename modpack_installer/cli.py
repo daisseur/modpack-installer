@@ -11,7 +11,7 @@ import sys
 import json
 import subprocess
 import time
-import random
+import tempfile
 import shutil
 import argparse
 import webbrowser
@@ -52,12 +52,12 @@ def get_user_mcdir():
         os.getenv('HOME') + '/.var/app/com.mojang.Minecraft/.minecraft/'
     )
 
-    #remove unexistant paths
+    #remove nonexistent paths
     possible_homes = [h for h in possible_homes if os.path.exists(h)]
 
     # no minecraft path found, ask the user to insert it
     if len(possible_homes) == 0:
-        return input("No minecraft installation detected, please instert the .minecraft folder path (ctrl + c to cancel): ")
+        return input("No minecraft installation detected, please insert the .minecraft folder path (ctrl + c to cancel): ")
 
     # only one possible home has been found, just return it
     elif len(possible_homes) == 1:
@@ -329,25 +329,26 @@ def install_modpack(zipfile,
                     os.symlink(os.path.abspath(jar), modfile)
             elif ftype == 'texture-packs':
                 print("Extracting texture pack %s" % jar)
-                texpack_dir = '/tmp/%06d' % random.randint(0, 999999)
-                os.mkdir(texpack_dir)
-                with ZipFile(jar, 'r') as zf:
-                    zf.extractall(texpack_dir)
-                if os.path.exists(texpack_dir + '/data'):
-                    # we have a data pack, don't extract it
-                    has_datapacks = True
-                    print("-> is actually data pack, placing into datapacks")
-                    if not os.path.isdir(mc_dir + '/datapacks'):
-                        os.mkdir(mc_dir + '/datapacks')
-                    os.symlink(os.path.abspath(jar), mc_dir + '/datapacks/' + os.path.basename(jar))
-                else:
-                    for subdir in os.listdir(texpack_dir + '/assets'):
-                        f = texpack_dir + '/assets/' + subdir
-                        if os.path.isdir(f):
-                            copy_tree(f, mc_dir + '/resources/' + subdir)
-                        else:
-                            shutil.copyfile(f, mc_dir + '/resources/' + subdir)
-                shutil.rmtree(texpack_dir)
+                texpack_dir = tempfile.mkdtemp(prefix='modpack_texpack_')
+                try:
+                    with ZipFile(jar, 'r') as zf:
+                        zf.extractall(texpack_dir)
+                    if os.path.exists(texpack_dir + '/data'):
+                        # we have a data pack, don't extract it
+                        has_datapacks = True
+                        print("-> is actually data pack, placing into datapacks")
+                        if not os.path.isdir(mc_dir + '/datapacks'):
+                            os.mkdir(mc_dir + '/datapacks')
+                        os.symlink(os.path.abspath(jar), mc_dir + '/datapacks/' + os.path.basename(jar))
+                    else:
+                        for subdir in os.listdir(texpack_dir + '/assets'):
+                            f = texpack_dir + '/assets/' + subdir
+                            if os.path.isdir(f):
+                                copy_tree(f, mc_dir + '/resources/' + subdir)
+                            else:
+                                shutil.copyfile(f, mc_dir + '/resources/' + subdir)
+                finally:
+                    shutil.rmtree(texpack_dir)
             else:
                 print("Unknown file type %s" % ftype)
 

@@ -51,7 +51,7 @@ def main(manifest, mcver, mlver, packname, mc_dir, manual):
         subprocess.run(args)
 
     if not os.path.exists(mc_dir + '/versions/' + get_version_id(mcver, mlver)):
-        print("Forge installation failed.")
+        print("Fabric installation failed.")
         sys.exit(3)
 
 def get_version_id(mcver, mlver):
