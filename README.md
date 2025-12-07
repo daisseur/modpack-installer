@@ -38,15 +38,71 @@ to upgrade all of your existing modpacks.
     where the game can still access them
 
 ### Requirements  
-This program requires the Minecraft launcher, Python 3, and a JDK (8 or
-higher). The only dependency library that is not automatically installed is Requests,
-which can be installed with pip (or your favorite method of installing Python
-libraries):  
+This program requires the Minecraft launcher, Python 3.7 or higher, and a JDK (8 or higher).
+
+### Installation
+
+#### Option 1: Using pipx (Recommended)
+The easiest way to install this tool is using [pipx](https://pipx.pypa.io/), which installs Python CLI tools in isolated environments:
+
+```bash
+# Install pipx if you don't have it
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+
+# Install modpack-installer directly from GitHub
+pipx install git+https://github.com/daisseur/modpack-installer.git
+
+# You can now use the commands:
+modpack-installer --help
+modpack-clean --help
+modpack-migrate --help
 ```
+
+#### Option 2: Using pip
+You can also install with pip:
+
+```bash
+pip3 install --user git+https://github.com/daisseur/modpack-installer.git
+```
+
+#### Option 3: Manual Installation (Legacy)
+If you prefer to run from source:
+
+```bash
+git clone https://github.com/daisseur/modpack-installer.git
+cd modpack-installer
+pip3 install --user -e .
+```
+
+Or install just the dependencies:
+```bash
 pip3 install --user requests
 ```
 
 ### How to Use
+
+#### Using the Installed Command (if installed via pipx/pip)
+```bash
+# Install a modpack
+modpack-installer <modpack_name.zip>
+
+# With options
+modpack-installer --manual <modpack_name.zip>
+modpack-installer --open-browser <modpack_name.zip>
+modpack-installer --mcdir /custom/path/.minecraft <modpack_name.zip>
+
+# Update an existing modpack
+modpack-installer --update packs/OldModpack <modpack_name.zip>
+
+# Clean up unused mods
+modpack-clean
+
+# Migrate old installations
+modpack-migrate
+```
+
+#### Using the Legacy Method (running from source)
 * Download a modpack and move the zip file into this directory.
 * Open a terminal in this directory and type:
   ```
@@ -69,11 +125,10 @@ pip3 install --user requests
   modpacks.
   * Note that deleting the modpack does not automatically delete any mod files, as
     they are stored in a central `.modcache` directory. To clean up unused mods, run
-    the `clean.py` script.
-* You can use the `-b` flag in order to automatically open any modpacks
-  that need to be installed manually. This will open them in your default
-  browser using `webbrowser`.
-* Use `python install.py -h` for a complete list of available commands
+    the `modpack-clean` command (or `python clean.py` if running from source).
+* You can use the `-b` or `--open-browser` flag to automatically open any modpacks
+  that need to be installed manually. This will open them in your default browser.
+* Use `modpack-installer -h` (or `python install.py -h`) for a complete list of available commands
 
 ### How it Works
 The installer script goes through several steps to install the modpack:
