@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modpack-installer"
+version = "2.3.5"
+description = "Command-line tool for installing CurseForge modpacks on Linux systems"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "cdbbnnyCode"},
+]
+maintainers = [
+    {name = "daisseur"},
+]
+keywords = ["minecraft", "curseforge", "modpack", "forge", "fabric", "linux"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment",
+]
+
+dependencies = [
+    "requests>=2.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/daisseur/modpack-installer"
+"Bug Tracker" = "https://github.com/daisseur/modpack-installer/issues"
+Repository = "https://github.com/daisseur/modpack-installer"
+
+[project.scripts]
+modpack-installer = "modpack_installer.cli:main"
+modpack-clean = "modpack_installer.clean:main"
+modpack-migrate = "modpack_installer.migrate:main"
+
+[tool.setuptools]
+packages = ["modpack_installer"]
+
+[tool.setuptools.package-data]
+modpack_installer = ["*.java"]
+
+[tool.black]
+line-length = 100
+target-version = ['py37']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

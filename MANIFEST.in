@@ -1,0 +1,4 @@
+include README.md
+include LICENSE
+include modpack_installer/ForgeHack.java
+recursive-include modpack_installer *.py
